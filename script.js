@@ -2,6 +2,7 @@ const inputBox = document.querySelector(".inputField input");
 const addBtn = document.querySelector(".inputField button");
 const todoList = document.querySelector(".todoList");
 const tasksNumber = document.querySelector(".footer span");
+const deleteAllButton = document.querySelector(".footer button");
 
 inputBox.onkeyup= () => {
   let userData = inputBox.value;//getting user entered value
@@ -28,6 +29,7 @@ addBtn.onclick = ()=> {
   listArr.push(userData);//json객체(objcet)에 값 추가
   localStorage.setItem("New todo", JSON.stringify(listArr));//값이 추가된 json객체(object)를 string객체로 바꾸고 setItem(업데이트된것만 추가됨)
   showTasks();//calling showTasks function
+  addBtn.classList.remove("active");
 }
 //!!! addBtn.onclick에다가 showTasks기능을 한번에 구현할 수도 있었지만 함수형 프로그래밍으로서 1가지 함수,메서드에는 1가지 기능을 구현하는것이 적합하다(가독성, 간결성 높아짐)
 
@@ -38,6 +40,11 @@ function showTasks(){
     listArr = [];//listArr은 원래 objcet임
   }else{
     listArr = JSON.parse(getLocalStorage);//objcet화
+  }
+  if(listArr.length>0){
+    deleteAllButton.classList.add("active");
+  }else{
+    deleteAllButton.classList.remove("active");
   }
 let newLiTag = '';
 listArr.forEach((element, index) => {//forEach함수의 두번째 매개변수는 해당 요소의 index를 받는다
@@ -52,13 +59,17 @@ tasksNumber.innerText = `you have ${listLength} pending tasks`;
 
 //delete task function
 function deleteTask(index){
-  let getLocalStorage = localStorage.getItem("New todo");
-  listArr = JSON.parse(getLocalStorage);//objcet화
+ 
   listArr.splice(index, 1);//delete or remove the paricular indexed li
   // after remove the li again update the local getLocalStorage
   //splice(배열 변경을 시작할 인덱스, 배열에서 제거할 요소의 수, 배열에 추가할 요소)
   localStorage.setItem("New todo", JSON.stringify(listArr));
   showTasks();
-  let listLength = listArr.length;
-  tasksNumber.innerText = `you have ${listLength} pending tasks`;
+  
+}
+
+deleteAllButton.onclick = ()=>{
+  listArr=[];
+  localStorage.setItem("New todo",JSON.stringify(listArr));
+  showTasks();
 }
